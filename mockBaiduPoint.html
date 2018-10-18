@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>模拟百度地图运动点</title>
+</head>
+
+<body>
+  <label>entity_name:</label><input type="text" value="" id='entity_name'><br />
+  <label>模拟次数:</label><input type="number" value="" id='mockNum'><br />
+  <div style="width:400px;height:50vh;overflow: auto;border:1px rgb(124, 121, 121) solid;border-radius:5px" id='mockRes'></div>
+  <button id='run'>开始模拟</button>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+<script>
+  //四则运算化成整数计算方法
+  var floatCalc = function (a, b) {
+    a = a + '', b = b + '';
+    var aNum = a.indexOf('.'),
+      bNum = b.indexOf('.'),
+      aSum,
+      bSum,
+      resultNum,
+      inta,
+      intb;
+
+    aSum = aNum < 0 ? 0 : a.split('.')[1].length;
+    bSum = bNum < 0 ? 0 : b.split('.')[1].length;
+    resultNum = aSum > bSum ? aSum : bSum;
+
+    inta = aNum < 0 ? Number(a + (Math.pow(10, resultNum) + '').replace('1', '')) : (function () {
+      a = a.replace('.', '');
+      a = resultNum == aSum ? a : a + (Math.pow(10, resultNum - aSum) + '').replace('1', '');
+      return Number(a);
+    }())
+
+    intb = bNum < 0 ? Number(b + (Math.pow(10, resultNum) + '').replace('1', '')) : (function () {
+      b = b.replace('.', '');
+      b = resultNum == bSum ? b : b + (Math.pow(10, resultNum - bSum) + '').replace('1', '');
+      return Number(b);
+    }())
+
+    return {
+      a: inta,
+      b: intb,
+      num: resultNum
+    };
+  }
+  //加法
+  Number.prototype.add = function (n) {
+    var o = floatCalc(this, n);
+    return (o.a + o.b) / Math.pow(10, o.num);
+  }
+  //减法
+  Number.prototype.minus = function (n) {
+    var o = floatCalc(this, n);
+    return (o.a - o.b) / Math.pow(10, o.num);
+  }
+  //乘法
+  Number.prototype.subtract = function (n) {
+    var o = floatCalc(this, n);
+    return (o.a * o.b) / Math.pow(10, o.num * 2);
+  }
+  //除法
+  Number.prototype.divide = function (n) {
+    var o = floatCalc(this, n);
+    return (o.a / o.b);
+  }
+
+  var latitude = 30.664397, longitude = 104.072564;
+
+
+ function boxScroll(o){
+     o.scrollTop = o.scrollHeight;
+}
+
+  var run = (j = 1) => {
+    var $entityName = $('#entity_name').val().trim();
+    var $mockNum = $('#mockNum').val().trim();
+    var $mockRes = $('#mockRes');
+    $mockRes.scrollTop($mockRes.scrollHeight);
+
+    if(!$entityName){alert('请输入实体名！');return};
+    if($mockNum.indexOf('e')>1 || $mockNum.indexOf('-')>1 || $mockNum.indexOf('+')>1 || $mockNum.indexOf('.')>1 || !$mockNum) {alert('模拟次数请输入正整数');$('#mockNum').val('').focus();return}
+    
+    var speed = Math.random() * 100;
+    latitude = latitude.add(0.000023);
+    longitude = longitude.add(0.000090);
+
+    var mockData = {
+      speed: speed,
+      latitude: latitude + '',
+      longitude: longitude + '',
+      ak: "tdTp6sFx06t2QajPplvjrMBlhF2mpiYC",
+      service_id: 203819,
+      entity_name: $entityName,
+      loc_time: Math.round(new Date().getTime() / 1000),
+      coord_type_input: "bd09ll",
+    }
+    console.log('请求数据', mockData);
+    $.ajax({
+      type: "POST",
+      url: 'http://yingyan.baidu.com/api/v3/track/addpoint',
+      data: mockData,
+      // async: false,
+      complete: (res) => {
+        console.log('返回信息', res);
+        const _responseText = JSON.parse(res.responseText)
+        if (_responseText.status == 0) {
+          $mockRes.append(`<p>第${j}次运动模拟成功</p>`);
+            if (j == $mockNum) return;
+            if(j == 36){
+              setTimeout(()=>{
+                run(j += 1);
+              }, 300);
+              return;
+            }
+            run(j += 1)
+        } else {
+          $mockRes.append(`<p style='color:red'>第${j}次运动模拟失败</p>`);
+            if (j == $mockNum) return;
+            if(j == 36){
+              setTimeout(()=>{
+                run(j += 1);
+              }, 300);
+              return;
+            }
+            run(j += 1)
+        }
+      }
+    })
+  }
+
+  $('#run').click(() => {
+    run(1)
+  })
+</script>
+
+</html>

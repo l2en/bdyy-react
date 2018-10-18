@@ -1,0 +1,39 @@
+@0px: 0px; //使用px单位时有个坑，必须采用+的方式，不然编译的不对
+@marginList: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 30, 40, 48,
+  50, 75;
+//margin-left函数
+
+.MP(@list,@i:5,@member:extract(@list,@i)) when (length(@list)>=@i) {
+  .mt-@{member} {
+    margin-top: @member + @0px !important;
+  }
+  .ml-@{member} {
+    margin-left: @member + @0px !important;
+  }
+  .mb-@{member} {
+    margin-bottom: @member + @0px !important;
+  }
+  .mr-@{member} {
+    margin-right: @member + @0px !important;
+  }
+  .m-@{member} {
+    margin: @member + @0px !important;
+  }
+  .pt-@{member} {
+    padding-top: @member + @0px !important;
+  }
+  .pl-@{member} {
+    padding-left: @member + @0px !important;
+  }
+  .pb-@{member} {
+    padding-bottom: @member + @0px !important;
+  }
+  .pr-@{member} {
+    padding-right: @member + @0px !important;
+  }
+  .p-@{member} {
+    padding: @member + @0px !important;
+  }
+  .MP(@list, (@i+5));
+}
+.MP(@marginList);

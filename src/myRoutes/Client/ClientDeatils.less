@@ -1,0 +1,55 @@
+@import '~antd/lib/style/themes/default.less';
+
+.title {
+  color: @heading-color;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.avatar {
+  width: 130px !important;
+  height: 160px !important;
+  position: relative;
+  &:hover {
+    .avatardialog {
+      opacity: 1;
+    }
+  }
+  &dialog {
+    position: absolute;
+    opacity: 0;
+    border-radius: 3px;
+    transition: opacity 0.3s;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 3;
+    color: #fff;
+    text-align: center;
+    line-height: 160px;
+    font-weight: bold;
+    font-size: 20px;
+    & a {
+      color: #fff !important;
+    }
+    & > i {
+      cursor: pointer;
+      &:nth-child(1) {
+        margin-right: 15px;
+      }
+    }
+  }
+}
+.detailsimg {
+  width: 130px !important;
+  height: 160px !important;
+  border-radius: 3px;
+  padding: 3px;
+  border: 1px #eee solid;
+  position: absolute;
+}
+
+.mapDialog {
+  width: 800px;
+  height: 600px;
+}
